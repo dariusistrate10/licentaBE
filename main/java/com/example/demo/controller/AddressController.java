@@ -34,9 +34,9 @@ public class AddressController {
         addressService.addAddress(address);
     }
 
-    @PutMapping("/update")
-    public void updateAddress(@RequestBody Address address) {
-        addressService.updateAddress(address);
+    @PutMapping("/update/{id}")
+    public void updateAddress(@PathVariable("id") Long id, @RequestBody Address address) {
+        addressService.updateAddress(id, address);
     }
 
     @DeleteMapping("/delete/{id}")

@@ -33,7 +33,15 @@ public class AddressService {
         } else System.out.println("Address inputs might be null.");
     }
 
-    public Address updateAddress(Address address) {
+    public Address updateAddress(Long id, Address address) {
+        Address foundAddress = addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Address not found with id" + id));
+
+        foundAddress.setCity(address.getCity());
+        foundAddress.setStreetLine(address.getStreetLine());
+        foundAddress.setCountry(address.getCountry());
+        foundAddress.setCity(address.getCity());
+
         return addressRepository.save(address);
     }
 
