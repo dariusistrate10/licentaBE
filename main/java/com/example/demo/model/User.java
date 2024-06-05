@@ -32,6 +32,8 @@ public class User {
     private String defaultDeliveryAddress;
     @Column
     private String defaultBillingAddress;
+    @Column
+    private String role;
 
 //    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)

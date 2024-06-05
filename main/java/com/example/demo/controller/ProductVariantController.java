@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.ProductVariant;
+import com.example.demo.model.Review;
 import com.example.demo.service.ProductVariantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -52,5 +53,15 @@ public class ProductVariantController {
     @DeleteMapping("/delete/{id}")
     public void deleteProductVariant(@PathVariable("id") Long id) {
         productVariantService.deleteProductVariant(id);
+    }
+
+    @PostMapping("/{productVariantId}/add/review")
+    public Review addReview(@PathVariable Long productVariantId, @RequestBody Review review) {
+        return productVariantService.saveReview(productVariantId, review);
+    }
+
+    @GetMapping("/{productVariantId}/reviews")
+    public List<Review> getReviewsByProductVariantId(@PathVariable Long productVariantId) {
+        return productVariantService.getReviewsByProductVariantId(productVariantId);
     }
 }
