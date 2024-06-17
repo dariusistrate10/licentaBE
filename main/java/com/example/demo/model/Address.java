@@ -1,9 +1,6 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +28,7 @@ public class Address {
     private String country;
 
     @ManyToMany(mappedBy = "addresses", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("addresses")
 //    @JsonIgnore
     private List<User> users;
 

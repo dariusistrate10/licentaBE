@@ -41,13 +41,13 @@ public class ProductVariantController {
     }
 
     @PostMapping("/add")
-    public void addProductVariant(@RequestBody ProductVariant productVariant) {
+        public void addProductVariant(@RequestBody ProductVariant productVariant) {
         productVariantService.addProductVariant(productVariant);
     }
 
-    @PutMapping("/update")
-    public void updateProductVariant(@RequestBody ProductVariant productVariant) {
-        productVariantService.updateProductVariant(productVariant);
+    @PutMapping("/update/{id}")
+    public void updateProductVariant(@PathVariable("id") Long id, @RequestBody ProductVariant productVariant) {
+        productVariantService.updateProductVariant(id, productVariant);
     }
 
     @DeleteMapping("/delete/{id}")

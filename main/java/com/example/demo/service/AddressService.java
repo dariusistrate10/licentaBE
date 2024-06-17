@@ -25,12 +25,13 @@ public class AddressService {
         return addressRepository.findById(id);
     }
 
-    public void addAddress(Address address) {
+    public Address addAddress(Address address) {
         if(address.getStreetLine() != null && address.getPostalCode() != null && address.getCity() != null && address.getCountry() != null) {
             if(address.getPostalCode().matches("[0-9]+") && address.getStreetLine().matches("[a-z A-Z 0-9 .,]+") && address.getCity().matches("[a-z A-Z]+") && address.getCountry().matches("[a-z A-Z]+")) {
                 addressRepository.save(address);
             } else System.out.println("Address inputs do not match the rules.");
         } else System.out.println("Address inputs might be null.");
+        return address;
     }
 
     public Address updateAddress(Long id, Address address) {

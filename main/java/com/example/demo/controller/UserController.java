@@ -3,10 +3,13 @@ package com.example.demo.controller;
 import com.example.demo.dto.MapStructMapper;
 import com.example.demo.dto.UserDto;
 import com.example.demo.dto.UserPostDto;
+import com.example.demo.model.Orders;
 import com.example.demo.service.AddressService;
+import com.example.demo.service.OrdersService;
 import com.example.demo.service.UserService;
 import com.example.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +22,7 @@ public class UserController {
     private final MapStructMapper mapStructMapper;
 
     @Autowired
-    public UserController(UserService userService, AddressService addressService, MapStructMapper mapStructMapper) {
+    public UserController(UserService userService, OrdersService ordersService, AddressService addressService, MapStructMapper mapStructMapper) {
         this.userService = userService;
         this.mapStructMapper = mapStructMapper;
     }
@@ -40,8 +43,14 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public void addUser(@RequestBody UserPostDto userPostDto) {
-        userService.addUser(mapStructMapper.userPostDtoToUser(userPostDto));
+    public ResponseEntity<User> addUser(@RequestBody UserPostDto userPostDTO) {
+        User createdUser = userService.addUser(userPostDTO);
+        return ResponseEntity.ok(createdUser);
+    }
+
+    @PostMapping("/add-user")
+    public User createUser(@RequestBody UserPostDto userDTO) {
+        return userService.createUser(userDTO);
     }
 
     @DeleteMapping("/delete/{id}")

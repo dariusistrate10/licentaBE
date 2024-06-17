@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Cart;
+import com.example.demo.model.Orders;
 import com.example.demo.service.CartService;
+import com.example.demo.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,10 +16,12 @@ import java.util.Optional;
 @RequestMapping("/cart")
 public class CartController {
     private final CartService cartService;
+    private final OrdersService ordersService;
 
     @Autowired
-    public CartController(CartService cartService) {
+    public CartController(CartService cartService, OrdersService ordersService) {
         this.cartService = cartService;
+        this.ordersService = ordersService;
     }
 
     @GetMapping
@@ -37,6 +42,12 @@ public class CartController {
     @PostMapping("/add/{userId}")
     public void addCart(@PathVariable("userId") Long userId) {
         cartService.addCart(userId);
+    }
+
+    @GetMapping("/{cartId}/orders")
+    public ResponseEntity<List<Orders>> getCartOrders(@PathVariable Long cartId) {
+        List<Orders> orders = ordersService.getOrdersByCartId(cartId);
+        return ResponseEntity.ok(orders);
     }
 
     @PutMapping("/update")

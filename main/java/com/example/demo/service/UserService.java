@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.UserPostDto;
 import com.example.demo.model.Address;
 import com.example.demo.repo.AddressRepository;
 import com.example.demo.repo.CartRepository;
@@ -8,55 +9,85 @@ import com.example.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final AddressService addressService;
     private final CartRepository cartRepository;
+    private final AddressRepository addressRepository;
 
     @Autowired
     public UserService(UserRepository userRepository, AddressRepository addressRepository, AddressService addressService, CartRepository cartRepository) {
         this.userRepository = userRepository;
         this.addressService = addressService;
         this.cartRepository = cartRepository;
+        this.addressRepository = addressRepository;
     }
 
     public List<User> listAllUsers() {
         return userRepository.findAll();
     }
 
-    public void addUser(User user) {
-        if (user.getFirstName() != null && user.getLastName() != null && user.getEmail() != null && user.getPassword() != null && user.getPhoneNumber() != null && user.getDefaultDeliveryAddress() != null && user.getDefaultBillingAddress() != null) {
-            if (user.getEmail().matches("[a-z A-Z 0-9 @.]+") && user.getPhoneNumber().matches("[0-9]+") && user.getPassword().matches("[0-9 a-z A-Z !@#$%^&*]+") && user.getPassword().length() >= 8) {
-                List<Address> addresses = user.getAddresses();
-                if (addresses != null) {
-                    for (Address address : addresses) {
-                        addressService.addAddress(address);
-                    }
-                }
-                userRepository.save(user);
-            } else System.out.println("User information not matching the rules.");
-        } else System.out.println("User inputs might be null.");
-//        List<Address> addresses = user.getAddresses();
-//        if(addresses != null) {
-//            for(Address address : addresses) {
-//                addressService.addAddress(address);
-//            }
-//        }
-//        return userRepository.save(user);
-    }
+    public User addUser(UserPostDto userPostDTO) {
+        User user = new User();
+        user.setFirstName(userPostDTO.getFirstName());
+        user.setLastName(userPostDTO.getLastName());
+        user.setEmail(userPostDTO.getEmail());
+        user.setPhoneNumber(userPostDTO.getPhoneNumber());
+        user.setPassword(userPostDTO.getPassword());
+        user.setDefaultDeliveryAddress(userPostDTO.getDefaultDeliveryAddress());
+        user.setDefaultBillingAddress(userPostDTO.getDefaultBillingAddress());
 
-//    public User addUserWithCart(User user, Long cartId) {
-//        Cart cart = cartRepository.findById(cartId).get();
-//        user.setCart(cart);
-//    }
+        List<Address> addresses = userPostDTO.getAddresses().stream().map(addressDTO -> {
+            Address address = new Address();
+            address.setStreetLine(addressDTO.getStreetLine());
+            address.setPostalCode(addressDTO.getPostalCode());
+            address.setCity(addressDTO.getCity());
+            address.setCountry(addressDTO.getCountry());
+            return address;
+        }).collect(Collectors.toList());
+
+        user.setAddresses(addresses);
+
+        for (Address address : addresses) {
+            addressRepository.save(address);
+        }
+
+        return userRepository.save(user);
+    }
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+    public User createUser(UserPostDto userDTO) {
+        User user = new User();
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+        user.setPhoneNumber(userDTO.getPhoneNumber());
+        user.setPassword(userDTO.getPassword());
+        user.setDefaultDeliveryAddress(userDTO.getDefaultDeliveryAddress());
+        user.setDefaultBillingAddress(userDTO.getDefaultBillingAddress());
+
+        List<Address> addresses = userDTO.getAddresses();
+        if (addresses != null) {
+            List<Address> savedAddresses = new ArrayList<>();
+            for (Address address : addresses) {
+                Address savedAddress = addressRepository.save(address);
+                savedAddresses.add(savedAddress);
+            }
+            user.setAddresses(savedAddresses);
+        }
+
+        return userRepository.save(user);
+    }
+
 
     public User updateUser(Long id, User user) {
         User foundUser = userRepository.findById(id)

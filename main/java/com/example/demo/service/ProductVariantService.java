@@ -43,8 +43,21 @@ public class ProductVariantService {
         productVariantRepository.save(productVariant);
     }
 
-    public void updateProductVariant(ProductVariant productVariant) {
-        productVariantRepository.save(productVariant);
+    public ProductVariant updateProductVariant(Long id, ProductVariant productVariant) {
+        ProductVariant foundProductVariant = productVariantRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("not found"));
+
+        foundProductVariant.setName(productVariant.getName());
+        foundProductVariant.setDescription(productVariant.getDescription());
+        foundProductVariant.setPrice(productVariant.getPrice());
+        foundProductVariant.setQuantity(productVariant.getQuantity());
+        foundProductVariant.setAttributeVariant(productVariant.getAttributeVariant());
+        foundProductVariant.setCategoryVariant(productVariant.getCategoryVariant());
+        foundProductVariant.setProductCore(productVariant.getProductCore());
+        foundProductVariant.setAddedDate(productVariant.getAddedDate());
+        foundProductVariant.setPhotoUrl(productVariant.getPhotoUrl());
+
+        return productVariantRepository.save(foundProductVariant);
     }
 
     public void deleteProductVariant(Long id) {

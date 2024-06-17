@@ -35,7 +35,8 @@ public class User {
     @Column
     private String role;
 
-//    @JsonIgnore
+    //    @JsonIgnore
+    @JsonIgnoreProperties("user")
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_address",

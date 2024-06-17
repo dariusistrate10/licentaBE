@@ -36,6 +36,14 @@ public class OrdersService {
         return ordersRepository.findById(id);
     }
 
+    public List<Orders> getOrdersByCartId(Long cartId) {
+        return ordersRepository.findByCartId(cartId);
+    }
+
+    public List<Orders> getOrdersByUserId(Long userId) {
+        return ordersRepository.findByUserId(userId);
+    }
+
     public void addOrders(Long userId, Long cartId, Long paymentId) {
         User user = userRepository.findById(userId).get();
         Payment payment = paymentRepository.findById(paymentId).get();
