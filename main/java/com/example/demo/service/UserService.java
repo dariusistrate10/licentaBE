@@ -6,6 +6,7 @@ import com.example.demo.repo.AddressRepository;
 import com.example.demo.repo.CartRepository;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.model.User;
+import com.example.demo.security.PasswordEncryptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +21,16 @@ public class UserService {
     private final AddressService addressService;
     private final CartRepository cartRepository;
     private final AddressRepository addressRepository;
+    private final PasswordEncryptionService passwordEncryptionService;
+
 
     @Autowired
-    public UserService(UserRepository userRepository, AddressRepository addressRepository, AddressService addressService, CartRepository cartRepository) {
+    public UserService(UserRepository userRepository, AddressRepository addressRepository, AddressService addressService, CartRepository cartRepository, PasswordEncryptionService passwordEncryptionService) {
         this.userRepository = userRepository;
         this.addressService = addressService;
         this.cartRepository = cartRepository;
         this.addressRepository = addressRepository;
+        this.passwordEncryptionService = passwordEncryptionService;
     }
 
     public List<User> listAllUsers() {
@@ -39,7 +43,7 @@ public class UserService {
         user.setLastName(userPostDTO.getLastName());
         user.setEmail(userPostDTO.getEmail());
         user.setPhoneNumber(userPostDTO.getPhoneNumber());
-        user.setPassword(userPostDTO.getPassword());
+        user.setPassword(passwordEncryptionService.encryptPassword(userPostDTO.getPassword()));
         user.setDefaultDeliveryAddress(userPostDTO.getDefaultDeliveryAddress());
         user.setDefaultBillingAddress(userPostDTO.getDefaultBillingAddress());
 

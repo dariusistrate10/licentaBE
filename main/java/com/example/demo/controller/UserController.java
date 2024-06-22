@@ -3,14 +3,16 @@ package com.example.demo.controller;
 import com.example.demo.dto.MapStructMapper;
 import com.example.demo.dto.UserDto;
 import com.example.demo.dto.UserPostDto;
-import com.example.demo.model.Orders;
+import com.example.demo.security.PasswordEncryptionService;
 import com.example.demo.service.AddressService;
 import com.example.demo.service.OrdersService;
 import com.example.demo.service.UserService;
 import com.example.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,11 +22,13 @@ import java.util.stream.Collectors;
 public class UserController {
     private final UserService userService;
     private final MapStructMapper mapStructMapper;
+    private final PasswordEncryptionService passwordEncryptionService;
 
     @Autowired
-    public UserController(UserService userService, OrdersService ordersService, AddressService addressService, MapStructMapper mapStructMapper) {
+    public UserController(UserService userService, OrdersService ordersService, AddressService addressService, MapStructMapper mapStructMapper, PasswordEncryptionService passwordEncryptionService) {
         this.userService = userService;
         this.mapStructMapper = mapStructMapper;
+        this.passwordEncryptionService = passwordEncryptionService;
     }
 
     @GetMapping
@@ -64,8 +68,11 @@ public class UserController {
     }
 
     @GetMapping("/search")
-    public User findUserByEmail(@RequestParam String email) {
+    public User findUserByEmail(@RequestParam String email, @RequestParam String password) {
         User user = userService.findUserByEmail(email);
-        return user;
+        boolean isPasswordMatch = passwordEncryptionService.matches(password, user.getPassword());
+        if (isPasswordMatch) {
+            return user;
+        } else return null;
     }
 }
